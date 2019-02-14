@@ -5,7 +5,7 @@ Number and name of feature: ### Feature #1: Display images
 
 Estimate of time needed to complete: 1.5 hours
 
-Start time: _____
+Start time: 9:40am
 
 Finish time: _____
 
