@@ -1,0 +1,12 @@
+* {
+  box-sizing: border-box;
+
+}
+
+body {
+  font-family: 'Slabo 27px', serif;
+  width: 960px;
+  margin: 0 auto;
+  
+}
+
