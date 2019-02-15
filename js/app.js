@@ -9,54 +9,85 @@ function Animal(animal) {
 
 }
 
-Animal.allAnimals = [];
+let pageOneAnimals = [];
+let pageTwoAnimals = [];
 
-Animal.prototype.render = function() {
-  $('main').append('<div class="clone"></div>');
-  $('select').append('<option class="option-clone"></option>');
+$('nav a').on('click', function(){
+  let $whereToGo = $(this).data('tab');
+  $('.photo-template').hide();
+  $('#' + $whereToGo).fadeIn(750);
+})
 
-  let animalClone = $('div[class="clone"]');
-  let animalHml = $('#photo-template').html();
+// Animal.prototype.render = function() {
+//   $('main').append('<div class="clone"></div>');
+//   $('select').append('<option class="option-clone"></option>');
 
-  let selectorClone = $('option[class="option-clone"]');
-  let selectorHtml = $('#filter').html();
+//   let animalClone = $('div[class="clone"]');
+//   let animalHml = $('#photo-template').html();
 
-  animalClone.html(animalHml)
+//   let selectorClone = $('option[class="option-clone"]');
+//   let selectorHtml = $('#filter').html();
 
-  selectorClone.html(selectorHtml)
+//   animalClone.html(animalHml)
 
-  animalClone.find('h2').text(this.title);
-  animalClone.find('img').attr({
-    src: this.image_url,
-    title: this.title,
-    alt: this.description,
-  });
-  animalClone.find('p').text(this.description);
-  animalClone.append('<h3></h3>');
-  animalClone.find('h3').text(`Number of horns: ${this.horns}`);
-  animalClone.removeClass('clone');
-  animalClone.attr('class', this.keyword);
-  animalClone.addClass('default');
+//   selectorClone.html(selectorHtml)
 
-  selectorClone.attr('value', this.keyword);
-  selectorClone.text(this.keyword);
-  selectorClone.attr('id', this.keyword);
-  selectorClone.removeClass('option-clone');
-  selectorClone.attr('class', 'choice');
+//   animalClone.find('h2').text(this.title);
+//   animalClone.find('img').attr({
+//     src: this.image_url,
+//     title: this.title,
+//     alt: this.description,
+//   });
+//   animalClone.find('p').text(this.description);
+//   animalClone.append('<h3></h3>');
+//   animalClone.find('h3').text(`Number of horns: ${this.horns}`);
+//   animalClone.removeClass('clone');
+//   animalClone.attr('class', this.keyword);
+//   animalClone.addClass('default');
+
+//   selectorClone.attr('value', this.keyword);
+//   selectorClone.text(this.keyword);
+//   selectorClone.attr('id', this.keyword);
+//   selectorClone.removeClass('option-clone');
+//   selectorClone.attr('class', 'choice');
+// }
+
+Animal.prototype.toHtml = function(){
+  const template = $('#animals-template').html(); 
+  const compiled = Handlebars.compile(template);
+  return compiled(this);
 }
 
 Animal.readJson = () => {
   $.get('./data/page-1.json', 'json')
     .then(data => {
       data.forEach(obj => {
-        Animal.allAnimals.push(new Animal(obj));
+        pageOneAnimals.push(new Animal(obj));
       })
     })
-    .then(Animal.loadAnimals);
-
+    .then(Animal.loadAnimalsOne);
+  $.get('./data/page-2.json', 'json')
+    .then(data => {
+      data.forEach(obj => {
+        pageTwoAnimals.push(new Animal(obj));
+      })
+    })
+    .then(Animal.loadAnimalsTwo);
 }
 
-Animal.loadAnimals = () => Animal.allAnimals.forEach(animal => animal.render())
+// Animal.loadAnimals = () => Animal.pageOneAnimals.forEach(animal => animal.render())
+Animal.loadAnimalsOne = () =>{
+  pageOneAnimals.forEach(images => {
+    $('#photo-template-one').append(images.toHtml());
+  })
+}
+
+Animal.loadAnimalsTwo = () =>{
+  pageTwoAnimals.forEach(images => {
+    $('#photo-template-two').append(images.toHtml());
+  })
+}
+
 
 $('#filter').on('change', function() {
   let selection = $(this).val();
