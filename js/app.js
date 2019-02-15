@@ -46,7 +46,7 @@ Animal.prototype.render = function() {
 }
 
 Animal.readJson = () => {
-  $.get('../data/page-1.json', 'json')
+  $.get('./data/page-1.json', 'json')
     .then(data => {
       data.forEach(obj => {
         Animal.allAnimals.push(new Animal(obj));
