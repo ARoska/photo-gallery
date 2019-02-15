@@ -11,7 +11,6 @@ function Animal(animal) {
 
 let pageOneAnimals = [];
 let pageTwoAnimals = [];
-let selectors = [];
 
 $('nav a').on('click', function(){
   let $whereToGo = $(this).data('tab');
@@ -25,13 +24,36 @@ let populateSelector = function() {
   let selectorClone = $('option[class="option-clone"]');
   let selectorHtml = $('#filter').html();
 
+  let selectors = [];
+  let retArr = [];
+
   selectorClone.html(selectorHtml)
+
+  let sortSelectors = (arr) => {
+    return arr.sort((a, b) => a > b);
+  }
+
+  pageOneAnimals.forEach( function(key) {
+    selectors.push(key.keyword);
+  })
+  pageTwoAnimals.forEach( function(key) {
+    selectors.push(key.keyword);
+  })
+  console.log('unsorted', selectors);
+  sortSelectors(selectors);
+  console.log('sorted', selectors);
+  for (let i = 0; i < selectors.length; i++){
+    if (selectors[i-1] !== selectors[i]) {
+      retArr.push(selectors[i]);
+    }
+    selectors = retArr;
+  }
 
   selectors.forEach((key) => {
     selectorClone.attr('value', key);
     selectorClone.text(key);
     selectorClone.removeClass('option-clone');
-})
+  })
 }
 
 Animal.prototype.toHtml = function(){
@@ -57,35 +79,36 @@ Animal.readJson = () => {
     .then(Animal.loadAnimalsTwo);
 }
 
-Animal.prototype.keywords = function() {
-  let retArr = [];
+// Animal.prototype.keywords = function() {
+//   let retArr = [];
 
-  pageOneAnimals.forEach( function(key) {
-    selectors.push(key.keyword);
-  })
-  pageTwoAnimals.forEach( function(key) {
-    selectors.push(key.keyword);
-  })
-  selectors.sort((a, b) => a > b);
-  for (let i = 0; i < selectors.length; i++){
-    if (selectors[i-1] !== selectors[i]) {
-      retArr.push(selectors[i]);
-    }
-    selectors = retArr;
-  }
-}
+//   pageOneAnimals.forEach( function(key) {
+//     selectors.push(key.keyword);
+//   })
+//   pageTwoAnimals.forEach( function(key) {
+//     selectors.push(key.keyword);
+//   })
+//   selectors.sort((a, b) => a > b);
+//   for (let i = 0; i < selectors.length; i++){
+//     if (selectors[i-1] !== selectors[i]) {
+//       retArr.push(selectors[i]);
+//     }
+//     selectors = retArr;
+//   }
+// }
 
 // Animal.loadAnimals = () => Animal.pageOneAnimals.forEach(animal => animal.render())
 Animal.loadAnimalsOne = () =>{
-  pageOneAnimals.forEach(images => {
-    $('#photo-template-one').append(images.toHtml());
+  pageOneAnimals.forEach(key => {
+    $('#photo-template-one').append(key.toHtml());
+
   })
   populateSelector();
 }
 
 Animal.loadAnimalsTwo = () =>{
-  pageTwoAnimals.forEach(images => {
-    $('#photo-template-two').append(images.toHtml());
+  pageTwoAnimals.forEach(key => {
+    $('#photo-template-two').append(key.toHtml());
   })
   populateSelector();
 }
