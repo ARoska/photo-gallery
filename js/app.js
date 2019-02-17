@@ -18,42 +18,46 @@ $('nav a').on('click', function(){
   $('#' + $whereToGo).fadeIn(750);
 })
 
-// Animal.prototype.render = function() {
-//   $('main').append('<div class="clone"></div>');
-//   $('select').append('<option class="option-clone"></option>');
+let populateSelector = function() {
+  $('select').append('<option class="option-clone"></option>');
 
-//   let animalClone = $('div[class="clone"]');
-//   let animalHml = $('#photo-template').html();
+  let selectorClone = $('option[class="option-clone"]');
+  let selectorHtml = $('#filter').html();
 
-//   let selectorClone = $('option[class="option-clone"]');
-//   let selectorHtml = $('#filter').html();
+  let selectors = [];
+  let retArr = [];
 
-//   animalClone.html(animalHml)
+  selectorClone.html(selectorHtml)
 
-//   selectorClone.html(selectorHtml)
+  let sortSelectors = (arr) => {
+    return arr.sort((a, b) => a > b);
+  }
 
-//   animalClone.find('h2').text(this.title);
-//   animalClone.find('img').attr({
-//     src: this.image_url,
-//     title: this.title,
-//     alt: this.description,
-//   });
-//   animalClone.find('p').text(this.description);
-//   animalClone.append('<h3></h3>');
-//   animalClone.find('h3').text(`Number of horns: ${this.horns}`);
-//   animalClone.removeClass('clone');
-//   animalClone.attr('class', this.keyword);
-//   animalClone.addClass('default');
+  pageOneAnimals.forEach( function(key) {
+    selectors.push(key.keyword);
+  })
+  pageTwoAnimals.forEach( function(key) {
+    selectors.push(key.keyword);
+  })
+  console.log('unsorted', selectors);
+  sortSelectors(selectors);
+  console.log('sorted', selectors);
+  for (let i = 0; i < selectors.length; i++){
+    if (selectors[i-1] !== selectors[i]) {
+      retArr.push(selectors[i]);
+    }
+    selectors = retArr;
+  }
 
-//   selectorClone.attr('value', this.keyword);
-//   selectorClone.text(this.keyword);
-//   selectorClone.attr('id', this.keyword);
-//   selectorClone.removeClass('option-clone');
-//   selectorClone.attr('class', 'choice');
-// }
+  selectors.forEach((key) => {
+    selectorClone.attr('value', key);
+    selectorClone.text(key);
+    selectorClone.removeClass('option-clone');
+  })
+}
 
 Animal.prototype.toHtml = function(){
-  const template = $('#animals-template').html(); 
+  const template = $('#animals-template').html();
   const compiled = Handlebars.compile(template);
   return compiled(this);
 }
@@ -75,17 +79,38 @@ Animal.readJson = () => {
     .then(Animal.loadAnimalsTwo);
 }
 
+// Animal.prototype.keywords = function() {
+//   let retArr = [];
+
+//   pageOneAnimals.forEach( function(key) {
+//     selectors.push(key.keyword);
+//   })
+//   pageTwoAnimals.forEach( function(key) {
+//     selectors.push(key.keyword);
+//   })
+//   selectors.sort((a, b) => a > b);
+//   for (let i = 0; i < selectors.length; i++){
+//     if (selectors[i-1] !== selectors[i]) {
+//       retArr.push(selectors[i]);
+//     }
+//     selectors = retArr;
+//   }
+// }
+
 // Animal.loadAnimals = () => Animal.pageOneAnimals.forEach(animal => animal.render())
 Animal.loadAnimalsOne = () =>{
-  pageOneAnimals.forEach(images => {
-    $('#photo-template-one').append(images.toHtml());
+  pageOneAnimals.forEach(key => {
+    $('#photo-template-one').append(key.toHtml());
+
   })
+  populateSelector();
 }
 
 Animal.loadAnimalsTwo = () =>{
-  pageTwoAnimals.forEach(images => {
-    $('#photo-template-two').append(images.toHtml());
+  pageTwoAnimals.forEach(key => {
+    $('#photo-template-two').append(key.toHtml());
   })
+  populateSelector();
 }
 
 
